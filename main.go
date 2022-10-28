@@ -10,6 +10,7 @@ import (
 	"github.com/zsj/micro_web_service/gen/idl/demo"
 	"github.com/zsj/micro_web_service/internal/config"
 	"github.com/zsj/micro_web_service/internal/server"
+	"github.com/zsj/micro_web_service/internal/zlog"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pkg/errors"
@@ -41,11 +42,13 @@ func run() error {
 
 func main() {
 	configPath := flag.String("c", "./", "config file path")
+	logFilePath := flag.String("l", "log/service.log", "log file path")
 	flag.Parse()
-
 	if err := config.Load(*configPath); err != nil {
 		panic(err)
 	}
+	zlog.Init(*logFilePath)
+	defer zlog.Sync()
 
 	go func() {
 		port := config.Viper.GetInt("server.grpc.port")
