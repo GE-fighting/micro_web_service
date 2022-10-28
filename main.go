@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 
 	"github.com/zsj/micro_web_service/gen/idl/demo"
+	"github.com/zsj/micro_web_service/internal/config"
 	"github.com/zsj/micro_web_service/internal/server"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -38,10 +40,16 @@ func run() error {
 }
 
 func main() {
+	configPath := flag.String("c", "./", "config file path")
 	flag.Parse()
 
+	if err := config.Load(*configPath); err != nil {
+		panic(err)
+	}
+
 	go func() {
-		lis, err := net.Listen("tcp", ":9090")
+		port := config.Viper.GetInt("server.grpc.port")
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 		if err != nil {
 			panic(err)
 		}
