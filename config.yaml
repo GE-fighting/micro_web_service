@@ -3,3 +3,13 @@ server:
     port: 9090
   http:
     port: 8081
+
+zlog:
+  path: "log/service.log"
+
+mysql:
+  user: "root"
+  password: "123456"
+  ipaddress: "157.0.19.2"
+  port: 10164
+  dbName: "order"

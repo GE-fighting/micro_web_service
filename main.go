@@ -9,6 +9,7 @@ import (
 
 	"github.com/zsj/micro_web_service/gen/idl/demo"
 	"github.com/zsj/micro_web_service/internal/config"
+	"github.com/zsj/micro_web_service/internal/mysql"
 	"github.com/zsj/micro_web_service/internal/server"
 	"github.com/zsj/micro_web_service/internal/zlog"
 
@@ -37,19 +38,27 @@ func run() error {
 	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
-	return http.ListenAndServe(":8081", mux)
+	return http.ListenAndServe(fmt.Sprintf(":%d", config.Viper.GetInt("server.http.port")), mux)
 }
 
 func main() {
 	configPath := flag.String("c", "./", "config file path")
-	logFilePath := flag.String("l", "log/service.log", "log file path")
 	flag.Parse()
+
 	if err := config.Load(*configPath); err != nil {
 		panic(err)
 	}
-	zlog.Init(*logFilePath)
+	zlog.Init(config.Viper.GetString("zlog.path"))
 	defer zlog.Sync()
-
+	// 初始化mysql
+	if err := mysql.Init(config.Viper.GetString("mysql.user"), config.Viper.GetString("mysql.password"), config.Viper.GetString("mysql.ipaddress"), config.Viper.GetInt("mysql.port"),
+		config.Viper.GetString("mysql.dbName")); err != nil {
+		zlog.Suagr.Fatalf("init mysql fail %v", err)
+	}
+	// 模型迁移到数据库，创建表
+	// if err := dao.Migrate(); err != nil {
+	// 	zlog.Suagr.Fatalf("migrate faid %v", err)
+	// }
 	go func() {
 		port := config.Viper.GetInt("server.grpc.port")
 		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
