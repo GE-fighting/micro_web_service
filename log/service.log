@@ -4,3 +4,6 @@
 2022-10-28T16:43:18.147+0800	fatal	micro_web_service/main.go:57	init mysql fail dial tcp :10164: connectex: No connection could be made because the target machine actively refused it.
 2022-10-28T16:47:45.090+0800	fatal	micro_web_service/main.go:57	init mysql fail dial tcp :10164: connectex: No connection could be made because the target machine actively refused it.
 2022-10-28T16:51:27.851+0800	fatal	micro_web_service/main.go:57	init mysql fail Error 1049: Unknown database 'order'
+2022-11-03T23:19:12.255+0800	fatal	service/order.go:41	OrderService update Order failed : update must choose certail fields
+2022-11-03T23:19:30.320+0800	fatal	service/order.go:41	OrderService update Order failed : update must choose certail fields
+2022-11-03T23:21:03.282+0800	fatal	service/order.go:41	OrderService update Order failed : update must choose certail fields
